@@ -514,8 +514,6 @@ int luaU_getsetandrelease(lua_State* L)
     }
 }
 
-#if !defined(_WIN32)
-
 ///////////////////////////////////////////////////////////////////////////////
 //
 // luaU_func is a special macro that expands into a simple function wrapper.
@@ -700,7 +698,6 @@ private:
         return 0;
     }
 };
-#endif
 
 ///////////////////////////////////////////////////////////////////////////////
 //

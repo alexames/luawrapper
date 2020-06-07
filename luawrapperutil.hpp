@@ -26,7 +26,7 @@
 // This template removes reference and const qualifier from the type
 //
 template <typename T>
-struct luaW_remove_cr
+struct luaU_RemoveConstRef
 {
     typedef typename std::remove_const<typename std::remove_reference<T>::type>::type type;
 };
@@ -628,7 +628,7 @@ private:
     template<int... indices>
     static int callImpl(lua_State* L, luaU_IntPack<indices...>)
     {
-        luaU_push<ReturnType>(L, (luaW_check<T>(L, 1)->*MemberFunc)(luaU_check<typename luaW_remove_cr<Args>::type>(L, indices)...));
+        luaU_push<ReturnType>(L, (luaW_check<T>(L, 1)->*MemberFunc)(luaU_check<typename luaU_RemoveConstRef<Args>::type>(L, indices)...));
         return 1;
     }
 };
@@ -646,7 +646,7 @@ private:
     template<int... indices>
     static int callImpl(lua_State* L, luaU_IntPack<indices...>)
     {
-        (luaW_check<T>(L, 1)->*MemberFunc)(luaU_check<typename luaW_remove_cr<Args>::type>(L, indices)...);
+        (luaW_check<T>(L, 1)->*MemberFunc)(luaU_check<typename luaU_RemoveConstRef<Args>::type>(L, indices)...);
         return 0;
     }
 };
@@ -672,7 +672,7 @@ private:
     template<int... indices>
     static int callImpl(lua_State* L, luaU_IntPack<indices...>)
     {
-        luaU_push<ReturnType>(L, (*Func)(luaU_check<typename luaW_remove_cr<Args>::type>(L, indices)...));
+        luaU_push<ReturnType>(L, (*Func)(luaU_check<typename luaU_RemoveConstRef<Args>::type>(L, indices)...));
         return 1;
     }
 };
@@ -690,7 +690,7 @@ private:
     template<int... indices>
     static int callImpl(lua_State* L, luaU_IntPack<indices...>)
     {
-        (*Func)(luaU_check<typename luaW_remove_cr<Args>::type>(L, indices)...);
+        (*Func)(luaU_check<typename luaU_RemoveConstRef<Args>::type>(L, indices)...);
         return 0;
     }
 };

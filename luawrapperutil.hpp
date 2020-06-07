@@ -19,15 +19,12 @@
 
 #include "luawrapper.hpp"
 
-#ifndef LUAW_NO_CXX11
 #include <type_traits>
-#endif
 
 #ifndef LUAW_STD
 #define LUAW_STD std
 #endif
 
-#ifndef LUAW_NO_CXX11
 ////////////////////////////////////////////////////////////////////////////////
 //
 // This template removes reference and const qualifier from the type
@@ -37,7 +34,6 @@ struct luaW_remove_cr
 {
     typedef typename std::remove_const<typename std::remove_reference<T>::type>::type type;
 };
-#endif
 
 ////////////////////////////////////////////////////////////////////////////////
 //
@@ -140,7 +136,6 @@ struct luaU_Impl<double>
     static void   luaU_push (lua_State* L, const double& value) {                            lua_pushnumber  (L, value); }
 };
 
-#ifndef LUAW_NO_CXX11
 template<typename T>
 struct luaU_Impl<T, typename LUAW_STD::enable_if<LUAW_STD::is_enum<T>::value>::type>
 {
@@ -157,7 +152,6 @@ struct luaU_Impl<T*, typename LUAW_STD::enable_if<LUAW_STD::is_class<T>::value>:
     static void luaU_push ( lua_State* L, T*& value) {        luaW_push <T>(L, value); }
     static void luaU_push ( lua_State* L, T*  value) {        luaW_push <T>(L, value); }
 };
-#endif
 
 ///////////////////////////////////////////////////////////////////////////////
 //
@@ -167,10 +161,8 @@ struct luaU_Impl<T*, typename LUAW_STD::enable_if<LUAW_STD::is_class<T>::value>:
 template <typename U>
 inline U luaU_getfield(lua_State* L, int index, const char* field)
 {
-#ifndef LUAW_NO_CXX11
     static_assert(!LUAW_STD::is_same<U, const char*>::value,
         "luaU_getfield is not safe to use on const char*'s. (The string will be popped from the stack.)");
-#endif
     lua_getfield(L, index, field);
     U val = luaU_to<U>(L, -1);
     lua_pop(L, 1);
@@ -180,10 +172,8 @@ inline U luaU_getfield(lua_State* L, int index, const char* field)
 template <typename U>
 inline U luaU_checkfield(lua_State* L, int index, const char* field)
 {
-#ifndef LUAW_NO_CXX11
     static_assert(!LUAW_STD::is_same<U, const char*>::value,
         "luaU_checkfield is not safe to use on const char*'s. (The string will be popped from the stack.)");
-#endif
     lua_getfield(L, index, field);
     U val = luaU_check<U>(L, -1);
     lua_pop(L, 1);
@@ -193,10 +183,8 @@ inline U luaU_checkfield(lua_State* L, int index, const char* field)
 template <typename U>
 inline U luaU_optfield(lua_State* L, int index, const char* field, const U& fallback = U())
 {
-#ifndef LUAW_NO_CXX11
     static_assert(!LUAW_STD::is_same<U, const char*>::value,
         "luaU_getfield is not safe to use on const char*'s. (The string will be popped from the stack.)");
-#endif
     lua_getfield(L, index, field);
     U val = luaU_opt<U>(L, -1, fallback);
     lua_pop(L, 1);
@@ -526,7 +514,7 @@ int luaU_getsetandrelease(lua_State* L)
     }
 }
 
-#if !defined(_WIN32) && !defined(LUAW_NO_CXX11)
+#if !defined(_WIN32)
 
 ///////////////////////////////////////////////////////////////////////////////
 //

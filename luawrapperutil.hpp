@@ -41,17 +41,35 @@ struct luaU_RemoveConstRef
 // LuaWrapper, especially with small objects.
 //
 
-template<typename U, typename = void>
-struct luaU_Impl
-{
-    static U    luaU_check(lua_State* L, int      index);
-    static U    luaU_to   (lua_State* L, int      index);
-    static void luaU_push (lua_State* L, const U& value);
-};
+template <typename U> U luaU_to(lua_State* L, int index);
+template <> inline bool          luaU_to<>(lua_State* L, int index) { return lua_toboolean(L, index) != 0; }
+template <> inline const char*   luaU_to<>(lua_State* L, int index) { return lua_tostring(L, index); }
+template <> inline unsigned int  luaU_to<>(lua_State* L, int index) { return static_cast<unsigned int>(lua_tointeger(L, index)); }
+template <> inline int           luaU_to<>(lua_State* L, int index) { return static_cast<int>(lua_tointeger(L, index)); }
+template <> inline unsigned char luaU_to<>(lua_State* L, int index) { return static_cast<unsigned char>(lua_tointeger(L, index)); }
+template <> inline char          luaU_to<>(lua_State* L, int index) { return static_cast<char>(lua_tointeger(L, index)); }
+template <> inline float         luaU_to<>(lua_State* L, int index) { return static_cast<float>(lua_tonumber(L, index)); }
+template <> inline double        luaU_to<>(lua_State* L, int index) { return static_cast<double>(lua_tonumber(L, index)); }
 
-template<typename U> U    luaU_check(lua_State* L, int      index) { return luaU_Impl<U>::luaU_check(L, index); }
-template<typename U> U    luaU_to   (lua_State* L, int      index) { return luaU_Impl<U>::luaU_to   (L, index); }
-template<typename U> void luaU_push (lua_State* L, const U& value) {        luaU_Impl<U>::luaU_push (L, value); }
+template <typename U> U luaU_check(lua_State* L, int index);
+template <> inline bool          luaU_check<>(lua_State* L, int index) { return lua_toboolean(L, index) != 0; }
+template <> inline const char*   luaU_check<>(lua_State* L, int index) { return luaL_checkstring(L, index); }
+template <> inline unsigned int  luaU_check<>(lua_State* L, int index) { return static_cast<unsigned int>(luaL_checkinteger(L, index)); }
+template <> inline int           luaU_check<>(lua_State* L, int index) { return static_cast<int>(luaL_checkinteger(L, index)); }
+template <> inline unsigned char luaU_check<>(lua_State* L, int index) { return static_cast<unsigned char>(luaL_checkinteger(L, index)); }
+template <> inline char          luaU_check<>(lua_State* L, int index) { return static_cast<char>(luaL_checkinteger(L, index)); }
+template <> inline float         luaU_check<>(lua_State* L, int index) { return static_cast<float>(luaL_checknumber(L, index)); }
+template <> inline double        luaU_check<>(lua_State* L, int index) { return static_cast<double>(luaL_checknumber(L, index)); }
+
+template <typename U> void luaU_push(lua_State* L, U val);
+template <> inline void luaU_push<>(lua_State* L, const bool&          value) { lua_pushboolean(L, value); }
+template <> inline void luaU_push<>(lua_State* L, const char* const&   value) { lua_pushstring(L, value); }
+template <> inline void luaU_push<>(lua_State* L, const unsigned int&  value) { lua_pushinteger(L, value); }
+template <> inline void luaU_push<>(lua_State* L, const int&           value) { lua_pushinteger(L, value); }
+template <> inline void luaU_push<>(lua_State* L, const unsigned char& value) { lua_pushinteger(L, value); }
+template <> inline void luaU_push<>(lua_State* L, const char&          value) { lua_pushinteger(L, value); }
+template <> inline void luaU_push<>(lua_State* L, const float&         value) { lua_pushnumber(L, value); }
+template <> inline void luaU_push<>(lua_State* L, const double&        value) { lua_pushnumber(L, value); }
 
 ////////////////////////////////////////////////////////////////////////////////
 //
@@ -67,87 +85,6 @@ U luaU_opt(lua_State* L, int index, const U& fallback = U())
     else
         return luaU_Impl<U>::luaU_check(L, index);
 }
-
-template<>
-struct luaU_Impl<bool>
-{
-    static bool luaU_check(lua_State* L, int         index) { return lua_toboolean  (L, index) != 0; }
-    static bool luaU_to   (lua_State* L, int         index) { return lua_toboolean  (L, index) != 0; }
-    static void luaU_push (lua_State* L, const bool& value) {        lua_pushboolean(L, value); }
-};
-
-template<>
-struct luaU_Impl<const char*>
-{
-    static const char* luaU_check(lua_State* L, int                index) { return luaL_checkstring(L, index); }
-    static const char* luaU_to   (lua_State* L, int                index) { return lua_tostring    (L, index); }
-    static void        luaU_push (lua_State* L, const char* const& value) {        lua_pushstring  (L, value); }
-};
-
-template<>
-struct luaU_Impl<unsigned int>
-{
-    static unsigned int luaU_check(lua_State* L, int                 index) { return static_cast<unsigned int>(luaL_checkinteger(L, index)); }
-    static unsigned int luaU_to   (lua_State* L, int                 index) { return static_cast<unsigned int>(lua_tointeger    (L, index)); }
-    static void         luaU_push (lua_State* L, const unsigned int& value) {                                  lua_pushinteger  (L, value); }
-};
-
-template<>
-struct luaU_Impl<int>
-{
-    static int  luaU_check(lua_State* L, int        index) { return static_cast<int>(luaL_checkinteger(L, index)); }
-    static int  luaU_to   (lua_State* L, int        index) { return static_cast<int>(lua_tointeger    (L, index)); }
-    static void luaU_push (lua_State* L, const int& value) {                         lua_pushinteger  (L, value); }
-};
-
-template<>
-struct luaU_Impl<unsigned char>
-{
-    static unsigned char luaU_check(lua_State* L, int                  index) { return static_cast<unsigned char>(luaL_checkinteger(L, index)); }
-    static unsigned char luaU_to   (lua_State* L, int                  index) { return static_cast<unsigned char>(lua_tointeger    (L, index)); }
-    static void          luaU_push (lua_State* L, const unsigned char& value) {                                   lua_pushinteger  (L, value); }
-};
-
-template<>
-struct luaU_Impl<char>
-{
-    static char luaU_check(lua_State* L, int         index) { return static_cast<char>(luaL_checkinteger(L, index)); }
-    static char luaU_to   (lua_State* L, int         index) { return static_cast<char>(lua_tointeger    (L, index)); }
-    static void luaU_push (lua_State* L, const char& value) {                          lua_pushinteger  (L, value); }
-};
-
-template<>
-struct luaU_Impl<float>
-{
-    static float luaU_check(lua_State* L, int          index) { return static_cast<float>(luaL_checknumber(L, index)); }
-    static float luaU_to   (lua_State* L, int          index) { return static_cast<float>(lua_tonumber    (L, index)); }
-    static void  luaU_push (lua_State* L, const float& value) {                           lua_pushnumber  (L, value); }
-};
-
-template<>
-struct luaU_Impl<double>
-{
-    static double luaU_check(lua_State* L, int           index) { return static_cast<double>(luaL_checknumber(L, index)); }
-    static double luaU_to   (lua_State* L, int           index) { return static_cast<double>(lua_tonumber    (L, index)); }
-    static void   luaU_push (lua_State* L, const double& value) {                            lua_pushnumber  (L, value); }
-};
-
-template<typename T>
-struct luaU_Impl<T, typename std::enable_if<std::is_enum<T>::value>::type>
-{
-    static T    luaU_check(lua_State* L, int      index) { return static_cast<T>(luaL_checkinteger  (L, index)); }
-    static T    luaU_to   (lua_State* L, int      index) { return static_cast<T>(lua_tointeger      (L, index)); }
-    static void luaU_push (lua_State* L, const T& value) {        lua_pushnumber(L, static_cast<int>(value   )); }
-};
-
-template<typename T>
-struct luaU_Impl<T*, typename std::enable_if<std::is_class<T>::value>::type>
-{
-    static T*   luaU_check( lua_State* L, int index) { return luaW_check<T>(L, index); }
-    static T*   luaU_to   ( lua_State* L, int index) { return luaW_to   <T>(L, index); }
-    static void luaU_push ( lua_State* L, T*& value) {        luaW_push <T>(L, value); }
-    static void luaU_push ( lua_State* L, T*  value) {        luaW_push <T>(L, value); }
-};
 
 ///////////////////////////////////////////////////////////////////////////////
 //

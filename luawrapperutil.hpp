@@ -61,15 +61,14 @@ template <> inline char          luaU_check(lua_State* L, int index) { return st
 template <> inline float         luaU_check(lua_State* L, int index) { return static_cast<float>(luaL_checknumber(L, index)); }
 template <> inline double        luaU_check(lua_State* L, int index) { return static_cast<double>(luaL_checknumber(L, index)); }
 
-template <typename U> void luaU_push(lua_State* L, U val);
-template <> inline void luaU_push(lua_State* L, const bool          value) { lua_pushboolean(L, value); }
-template <> inline void luaU_push(lua_State* L, const char* const   value) { lua_pushstring(L, value); }
-template <> inline void luaU_push(lua_State* L, const unsigned int  value) { lua_pushinteger(L, value); }
-template <> inline void luaU_push(lua_State* L, const int           value) { lua_pushinteger(L, value); }
-template <> inline void luaU_push(lua_State* L, const unsigned char value) { lua_pushinteger(L, value); }
-template <> inline void luaU_push(lua_State* L, const char          value) { lua_pushinteger(L, value); }
-template <> inline void luaU_push(lua_State* L, const float         value) { lua_pushnumber(L, value); }
-template <> inline void luaU_push(lua_State* L, const double        value) { lua_pushnumber(L, value); }
+inline void luaU_push(lua_State* L, const bool          value) { lua_pushboolean(L, value); }
+inline void luaU_push(lua_State* L, const char* const   value) { lua_pushstring(L, value); }
+inline void luaU_push(lua_State* L, const unsigned int  value) { lua_pushinteger(L, value); }
+inline void luaU_push(lua_State* L, const int           value) { lua_pushinteger(L, value); }
+inline void luaU_push(lua_State* L, const unsigned char value) { lua_pushinteger(L, value); }
+inline void luaU_push(lua_State* L, const char          value) { lua_pushinteger(L, value); }
+inline void luaU_push(lua_State* L, const float         value) { lua_pushnumber(L, value); }
+inline void luaU_push(lua_State* L, const double        value) { lua_pushnumber(L, value); }
 
 ////////////////////////////////////////////////////////////////////////////////
 //
@@ -83,7 +82,7 @@ U luaU_opt(lua_State* L, int index, const U& fallback = U())
     if (lua_isnil(L, index))
         return fallback;
     else
-        return luaU_Impl<U>::luaU_check(L, index);
+        return luaU_check(L, index);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -127,7 +126,7 @@ inline U luaU_optfield(lua_State* L, int index, const char* field, const U& fall
 template <typename U>
 inline void luaU_setfield(lua_State* L, int index, const char* field, U val)
 {
-    luaU_push<U>(L, val);
+    luaU_push(L, val);
     lua_setfield(L, luaW_correctindex(L, index, 1), field);
 }
 
@@ -184,7 +183,7 @@ template <typename T, typename U, U T::*Member>
 int luaU_get(lua_State* L)
 {
     T* obj = luaW_check<T>(L, 1);
-    luaU_push<U>(L, obj->*Member);
+    luaU_push(L, obj->*Member);
     return 1;
 }
 
@@ -200,7 +199,7 @@ template <typename T, typename U, U (T::*Getter)() const>
 int luaU_get(lua_State* L)
 {
     T* obj = luaW_check<T>(L, 1);
-    luaU_push<U>(L, (obj->*Getter)());
+    luaU_push(L, (obj->*Getter)());
     return 1;
 }
 
@@ -208,7 +207,7 @@ template <typename T, typename U, const U& (T::*Getter)() const>
 int luaU_get(lua_State* L)
 {
     T* obj = luaW_check<T>(L, 1);
-    luaU_push<U>(L, (obj->*Getter)());
+    luaU_push(L, (obj->*Getter)());
     return 1;
 }
 
@@ -322,7 +321,7 @@ int luaU_getset(lua_State* L)
     }
     else
     {
-        luaU_push<U>(L, obj->*Member);
+        luaU_push(L, obj->*Member);
         return 1;
     }
 }
@@ -374,7 +373,7 @@ int luaU_getset(lua_State* L)
     }
     else
     {
-        luaU_push<U>(L, (obj->*Getter)());
+        luaU_push(L, (obj->*Getter)());
         return 1;
     }
 }
@@ -390,7 +389,7 @@ int luaU_getset(lua_State* L)
     }
     else
     {
-        luaU_push<U>(L, (obj->*Getter)());
+        luaU_push(L, (obj->*Getter)());
         return 1;
     }
 }
@@ -406,7 +405,7 @@ int luaU_getset(lua_State* L)
     }
     else
     {
-        luaU_push<U>(L, (obj->*Getter)());
+        luaU_push(L, (obj->*Getter)());
         return 1;
     }
 }

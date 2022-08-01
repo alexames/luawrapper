@@ -82,7 +82,7 @@ U luaU_opt(lua_State* L, int index, const U& fallback = U())
     if (lua_isnil(L, index))
         return fallback;
     else
-        return luaU_check(L, index);
+        return luaU_check<U>(L, index);
 }
 
 ///////////////////////////////////////////////////////////////////////////////

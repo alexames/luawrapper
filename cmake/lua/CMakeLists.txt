@@ -1,3 +1,10 @@
+# A universal CMakeLists file for Lua 5.0 to 5.4.
+#
+# This CMakeLists is set up so that it can build any of the commonly used
+# versions of Lua. It requires that LUA_SOURCE_DIR and LUA_VERSION be defined
+# prior to calling add_subdirectory on it. It will then select the appropriate
+# set of files to build and generate the library.
+
 cmake_minimum_required(VERSION 3.5)
 project(Lua VERSION ${LUA_VERSION})
 
@@ -222,56 +229,3 @@ set_target_properties(${interpreter_name}
         FOLDER Lua
 )
 target_link_libraries(${interpreter_name} PRIVATE ${library_name})
-
-################################################################################
-# Installation instructions.
-
-# include(GNUInstallDirs)
-# set(INSTALL_CONFIGDIR ${CMAKE_INSTALL_LIBDIR}/cmake/lua/BANANAN/)
-
-# install(TARGETS lua
-#     EXPORT lua-targets
-#     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-#     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-# )
-
-# install(FILES
-#     ${LUA_PUBLIC_HEADERS}
-#     DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-# )
-
-# # Export the targets to a script.
-# install(EXPORT lua-targets
-#   FILE
-#     LuaTargets.cmake
-#   NAMESPACE
-#     lua::
-#   DESTINATION
-#     ${INSTALL_CONFIGDIR}
-# )
-
-# # Create a ConfigVersion.cmake file.
-# include(CMakePackageConfigHelpers)
-# write_basic_package_version_file(
-#     ${CMAKE_CURRENT_BINARY_DIR}/LuaConfigVersion.cmake
-#     VERSION ${PROJECT_VERSION}
-#     COMPATIBILITY AnyNewerVersion
-# )
-
-# configure_package_config_file(${CMAKE_CURRENT_LIST_DIR}/cmake/LuaConfig.cmake.in
-#     ${CMAKE_CURRENT_BINARY_DIR}/LuaConfig.cmake
-#     INSTALL_DESTINATION ${INSTALL_CONFIGDIR}
-# )
-
-# # Install the config, configversion and custom find modules.
-# install(FILES
-#     ${CMAKE_CURRENT_BINARY_DIR}/LuaConfig.cmake
-#     ${CMAKE_CURRENT_BINARY_DIR}/LuaConfigVersion.cmake
-#     DESTINATION ${INSTALL_CONFIGDIR}
-# )
-
-# export(EXPORT lua-targets 
-#     FILE ${CMAKE_CURRENT_BINARY_DIR}/LuaTargets.cmake
-#     NAMESPACE lua::
-# )
-# export(PACKAGE lua)

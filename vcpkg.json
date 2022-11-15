@@ -1,0 +1,6 @@
+{
+  "name": "luawrapper",
+  "version": "0.0.1",
+  "description": "A simple C++ wrapper for lua bindings.",
+  "homepage": "https://github.com/alexames/luawrapper"
+}

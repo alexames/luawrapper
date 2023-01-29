@@ -42,10 +42,16 @@ foreach(version ${versions})
     "main.cpp")
   set(TEST_LIBRARY_SOURCES
     "BankAccount.cpp"
-    "BankAccount.hpp")
+    "BankAccount.hpp"
+    "Example.cpp"
+    "Example.hpp")
   set(TEST_LUA_LIBRARY_SOURCES
     "LuaBankAccount.cpp"
-    "LuaBankAccount.hpp")
+    "LuaBankAccount.hpp"
+    "LuaExample.cpp"
+    "LuaExample.hpp"
+    "../include/luawrapper.hpp"
+    "../include/luawrapperutil.hpp")
   source_group("Main" FILES ${TEST_MAIN_SOURCE})
   source_group("Cpp Libraries" FILES ${TEST_LIBRARY_SOURCES})
   source_group("Lua Wrappers" FILES ${TEST_LUA_LIBRARY_SOURCES})

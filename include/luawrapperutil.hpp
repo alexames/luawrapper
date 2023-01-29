@@ -39,84 +39,64 @@ struct luaU_RemoveConstRef {
 // LuaWrapper, especially with small objects.
 //
 
+// clang-format off
+template <typename U> bool luaU_is(lua_State* L, int index);
+template <> inline bool luaU_is<bool>       (lua_State* L, int index) { return lua_isboolean(L, index); }
+template <> inline bool luaU_is<uint8_t>    (lua_State* L, int index) { return lua_isnumber(L, index); }
+template <> inline bool luaU_is<int8_t>     (lua_State* L, int index) { return lua_isnumber(L, index); }
+template <> inline bool luaU_is<uint16_t>   (lua_State* L, int index) { return lua_isnumber(L, index); }
+template <> inline bool luaU_is<int16_t>    (lua_State* L, int index) { return lua_isnumber(L, index); }
+template <> inline bool luaU_is<uint32_t>   (lua_State* L, int index) { return lua_isnumber(L, index); }
+template <> inline bool luaU_is<int32_t>    (lua_State* L, int index) { return lua_isnumber(L, index); }
+template <> inline bool luaU_is<uint64_t>   (lua_State* L, int index) { return lua_isnumber(L, index); }
+template <> inline bool luaU_is<int64_t>    (lua_State* L, int index) { return lua_isnumber(L, index); }
+template <> inline bool luaU_is<float>      (lua_State* L, int index) { return lua_isnumber(L, index);  }
+template <> inline bool luaU_is<double>     (lua_State* L, int index) { return lua_isnumber(L, index);  }
+template <> inline bool luaU_is<const char*>(lua_State* L, int index) { return lua_isstring(L, index);  }
+
 template <typename U>
 U luaU_to(lua_State* L, int index);
-template <>
-inline bool luaU_to(lua_State* L, int index) {
-  return lua_toboolean(L, index) != 0;
-}
-template <>
-inline const char* luaU_to(lua_State* L, int index) {
-  return lua_tostring(L, index);
-}
-template <>
-inline unsigned int luaU_to(lua_State* L, int index) {
-  return static_cast<unsigned int>(lua_tointeger(L, index));
-}
-template <>
-inline int luaU_to(lua_State* L, int index) {
-  return static_cast<int>(lua_tointeger(L, index));
-}
-template <>
-inline unsigned char luaU_to(lua_State* L, int index) {
-  return static_cast<unsigned char>(lua_tointeger(L, index));
-}
-template <>
-inline char luaU_to(lua_State* L, int index) {
-  return static_cast<char>(lua_tointeger(L, index));
-}
-template <>
-inline float luaU_to(lua_State* L, int index) {
-  return static_cast<float>(lua_tonumber(L, index));
-}
-template <>
-inline double luaU_to(lua_State* L, int index) {
-  return static_cast<double>(lua_tonumber(L, index));
-}
+template <> inline bool        luaU_to(lua_State* L, int index) { return lua_toboolean(L, index) != 0;                   }
+template <> inline uint8_t     luaU_to(lua_State* L, int index) { return static_cast<uint8_t>(lua_tointeger(L, index));  }
+template <> inline int8_t      luaU_to(lua_State* L, int index) { return static_cast<int8_t>(lua_tointeger(L, index));   }
+template <> inline uint16_t    luaU_to(lua_State* L, int index) { return static_cast<uint16_t>(lua_tointeger(L, index)); }
+template <> inline int16_t     luaU_to(lua_State* L, int index) { return static_cast<int16_t>(lua_tointeger(L, index));  }
+template <> inline uint32_t    luaU_to(lua_State* L, int index) { return static_cast<uint32_t>(lua_tointeger(L, index)); }
+template <> inline int32_t     luaU_to(lua_State* L, int index) { return static_cast<int32_t>(lua_tointeger(L, index));  }
+template <> inline uint64_t    luaU_to(lua_State* L, int index) { return static_cast<uint64_t>(lua_tointeger(L, index)); }
+template <> inline int64_t     luaU_to(lua_State* L, int index) { return static_cast<int64_t>(lua_tointeger(L, index));  }
+template <> inline float       luaU_to(lua_State* L, int index) { return static_cast<float>(lua_tonumber(L, index));     }
+template <> inline double      luaU_to(lua_State* L, int index) { return static_cast<double>(lua_tonumber(L, index));    }
+template <> inline const char* luaU_to(lua_State* L, int index) { return lua_tostring(L, index);                         }
 
 template <typename U>
 U luaU_check(lua_State* L, int index);
-template <>
-inline bool luaU_check(lua_State* L, int index) {
-  return lua_toboolean(L, index) != 0;
-}
-template <>
-inline const char* luaU_check(lua_State* L, int index) {
-  return luaL_checkstring(L, index);
-}
-template <>
-inline unsigned int luaU_check(lua_State* L, int index) {
-  return static_cast<unsigned int>(luaL_checkinteger(L, index));
-}
-template <>
-inline int luaU_check(lua_State* L, int index) {
-  return static_cast<int>(luaL_checkinteger(L, index));
-}
-template <>
-inline unsigned char luaU_check(lua_State* L, int index) {
-  return static_cast<unsigned char>(luaL_checkinteger(L, index));
-}
-template <>
-inline char luaU_check(lua_State* L, int index) {
-  return static_cast<char>(luaL_checkinteger(L, index));
-}
-template <>
-inline float luaU_check(lua_State* L, int index) {
-  return static_cast<float>(luaL_checknumber(L, index));
-}
-template <>
-inline double luaU_check(lua_State* L, int index) {
-  return static_cast<double>(luaL_checknumber(L, index));
-}
+template <> inline bool        luaU_check(lua_State* L, int index) {  return lua_toboolean(L, index) != 0;                       }
+template <> inline uint8_t     luaU_check(lua_State* L, int index) {  return static_cast<uint8_t>(luaL_checkinteger(L, index));  }
+template <> inline int8_t      luaU_check(lua_State* L, int index) {  return static_cast<int8_t>(luaL_checkinteger(L, index));   }
+template <> inline uint16_t    luaU_check(lua_State* L, int index) {  return static_cast<uint16_t>(luaL_checkinteger(L, index)); }
+template <> inline int16_t     luaU_check(lua_State* L, int index) {  return static_cast<int16_t>(luaL_checkinteger(L, index));  }
+template <> inline uint32_t    luaU_check(lua_State* L, int index) {  return static_cast<uint32_t>(luaL_checkinteger(L, index)); }
+template <> inline int32_t     luaU_check(lua_State* L, int index) {  return static_cast<int32_t>(luaL_checkinteger(L, index));  }
+template <> inline uint64_t    luaU_check(lua_State* L, int index) {  return static_cast<uint64_t>(luaL_checkinteger(L, index)); }
+template <> inline int64_t     luaU_check(lua_State* L, int index) {  return static_cast<int64_t>(luaL_checkinteger(L, index));  }
+template <> inline float       luaU_check(lua_State* L, int index) {  return static_cast<float>(luaL_checknumber(L, index));     }
+template <> inline double      luaU_check(lua_State* L, int index) {  return static_cast<double>(luaL_checknumber(L, index));    }
+template <> inline const char* luaU_check(lua_State* L, int index) {  return luaL_checkstring(L, index);                         }
 
-inline void luaU_push(lua_State* L, const bool value) { lua_pushboolean(L, value); }
-inline void luaU_push(lua_State* L, const char* const value) { lua_pushstring(L, value); }
-inline void luaU_push(lua_State* L, const unsigned int value) { lua_pushinteger(L, value); }
-inline void luaU_push(lua_State* L, const int value) { lua_pushinteger(L, value); }
-inline void luaU_push(lua_State* L, const unsigned char value) { lua_pushinteger(L, value); }
-inline void luaU_push(lua_State* L, const char value) { lua_pushinteger(L, value); }
-inline void luaU_push(lua_State* L, const float value) { lua_pushnumber(L, value); }
-inline void luaU_push(lua_State* L, const double value) { lua_pushnumber(L, value); }
+inline void luaU_push(lua_State* L, bool        value) { lua_pushboolean(L, value); }
+inline void luaU_push(lua_State* L, uint8_t     value) { lua_pushinteger(L, value); }
+inline void luaU_push(lua_State* L, int8_t      value) { lua_pushinteger(L, value); }
+inline void luaU_push(lua_State* L, uint16_t    value) { lua_pushinteger(L, value); }
+inline void luaU_push(lua_State* L, int16_t     value) { lua_pushinteger(L, value); }
+inline void luaU_push(lua_State* L, uint32_t    value) { lua_pushinteger(L, value); }
+inline void luaU_push(lua_State* L, int32_t     value) { lua_pushinteger(L, value); }
+inline void luaU_push(lua_State* L, uint64_t    value) { lua_pushinteger(L, value); }
+inline void luaU_push(lua_State* L, int64_t     value) { lua_pushinteger(L, value); }
+inline void luaU_push(lua_State* L, float       value) { lua_pushnumber(L, value);  }
+inline void luaU_push(lua_State* L, double      value) { lua_pushnumber(L, value);  }
+inline void luaU_push(lua_State* L, const char* value) { lua_pushstring(L, value);  }
+// clang-format on
 
 ////////////////////////////////////////////////////////////////////////////////
 //
@@ -139,7 +119,8 @@ U luaU_opt(lua_State* L, int index, const U& fallback = U()) {
 
 template <typename U>
 inline U luaU_getfield(lua_State* L, int index, const char* field) {
-  static_assert(!std::is_same<U, const char*>::value, "luaU_getfield is not safe to use on const char*'s. (The string will be popped from the stack.)");
+  static_assert(!std::is_same<U, const char*>::value,
+                "luaU_getfield is not safe to use on const char*'s. (The string will be popped from the stack.)");
   lua_getfield(L, index, field);
   U val = luaU_to<U>(L, -1);
   lua_pop(L, 1);
@@ -148,7 +129,8 @@ inline U luaU_getfield(lua_State* L, int index, const char* field) {
 
 template <typename U>
 inline U luaU_checkfield(lua_State* L, int index, const char* field) {
-  static_assert(!std::is_same<U, const char*>::value, "luaU_checkfield is not safe to use on const char*'s. (The string will be popped from the stack.)");
+  static_assert(!std::is_same<U, const char*>::value,
+                "luaU_checkfield is not safe to use on const char*'s. (The string will be popped from the stack.)");
   lua_getfield(L, index, field);
   U val = luaU_check<U>(L, -1);
   lua_pop(L, 1);
@@ -157,7 +139,8 @@ inline U luaU_checkfield(lua_State* L, int index, const char* field) {
 
 template <typename U>
 inline U luaU_optfield(lua_State* L, int index, const char* field, const U& fallback = U()) {
-  static_assert(!std::is_same<U, const char*>::value, "luaU_getfield is not safe to use on const char*'s. (The string will be popped from the stack.)");
+  static_assert(!std::is_same<U, const char*>::value,
+                "luaU_getfield is not safe to use on const char*'s. (The string will be popped from the stack.)");
   lua_getfield(L, index, field);
   U val = luaU_opt<U>(L, -1, fallback);
   lua_pop(L, 1);
@@ -720,4 +703,4 @@ void luaU_store(lua_State* L, int index, const char* storagetable, const char* k
   lua_pop(L, 1);         // ... store ... obj
 }
 
-#endif // LUAWRAPPERUTILS_HPP_
+#endif  // LUAWRAPPERUTILS_HPP_

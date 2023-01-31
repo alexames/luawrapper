@@ -29,7 +29,7 @@ static int Example_PrintMe(lua_State* L)
     return 0;
 }
 
-static luaL_reg Example_metatable[] =
+static luaL_Reg Example_metatable[] =
 {
     // This function is
     { "PrintMe", Example_PrintMe },

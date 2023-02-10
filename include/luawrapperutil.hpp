@@ -106,10 +106,11 @@ inline void luaU_push(lua_State* L, const char* value) { lua_pushstring(L, value
 //
 template <typename U>
 U luaU_opt(lua_State* L, int index, const U& fallback = U()) {
-  if (lua_isnil(L, index))
+  if (lua_isnoneornil(L, index)) {
     return fallback;
-  else
+  } else {
     return luaU_check<U>(L, index);
+  }
 }
 
 ///////////////////////////////////////////////////////////////////////////////

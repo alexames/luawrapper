@@ -33,6 +33,8 @@
 #ifndef LUA_WRAPPER_H_
 #define LUA_WRAPPER_H_
 
+#include <type_traits>
+
 // If you are linking against Lua compiled in C++, define LUAW_NO_EXTERN_C
 #ifndef LUAW_NO_EXTERN_C
 extern "C" {
@@ -77,7 +79,7 @@ void luaW_defaultdeallocator(lua_State*, T* obj) {
 // shared_ptr represents, rather than the address of the shared_ptr itself.
 template <typename T>
 void luaW_defaultidentifier(lua_State* L, T* obj) {
-  lua_pushlightuserdata(L, obj);
+  lua_pushlightuserdata(L, const_cast<std::remove_const_t<T>*>(obj));
 }
 
 // This class is what is used by LuaWrapper to contain the userdata. data
@@ -232,7 +234,7 @@ void luaW_push(lua_State* L, T* obj) {
       lua_pop(L, 1);                                                                               // ... id cache
       lua_insert(L, -2);                                                                           // ... cache id
       luaW_Userdata* ud = static_cast<luaW_Userdata*>(lua_newuserdata(L, sizeof(luaW_Userdata)));  // ... cache id obj
-      ud->data = obj;
+      ud->data = const_cast<std::remove_const_t<T>*>(obj);
       ud->cast = LuaWrapper<T>::cast;
       lua_pushvalue(L, -1);  // ... cache id obj obj
       lua_insert(L, -4);     // ... obj cache id obj

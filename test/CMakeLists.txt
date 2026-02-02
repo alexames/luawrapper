@@ -1,36 +1,51 @@
 option(LUAWRAPPER_BUILD_TESTS "Build tests" ON)
-option(LUAWRAPPER_TEST_5_0 "Build tests for lua 5.0" ON)
 option(LUAWRAPPER_TEST_5_1 "Build tests for lua 5.1" ON)
 option(LUAWRAPPER_TEST_5_2 "Build tests for lua 5.2" ON)
 option(LUAWRAPPER_TEST_5_3 "Build tests for lua 5.3" ON)
 option(LUAWRAPPER_TEST_5_4 "Build tests for lua 5.4" ON)
+option(LUAWRAPPER_TEST_5_5 "Build tests for lua 5.5" ON)
 
-if (LUAWRAPPER_TEST_5_0)
-  list(APPEND versions "5.0")
-endif()
+set(lua_versions "")
+set(lua_branches "")
+
 if (LUAWRAPPER_TEST_5_1)
-  list(APPEND versions "5.1.1")
+  list(APPEND lua_versions "5.1.1")
+  list(APPEND lua_branches "extensions/5.1")
 endif()
 if (LUAWRAPPER_TEST_5_2)
-  list(APPEND versions "5.2.3")
+  list(APPEND lua_versions "5.2.4")
+  list(APPEND lua_branches "extensions/5.2")
 endif()
 if (LUAWRAPPER_TEST_5_3)
-  list(APPEND versions "5.3.6")
+  list(APPEND lua_versions "5.3.6")
+  list(APPEND lua_branches "extensions/5.3")
 endif()
 if (LUAWRAPPER_TEST_5_4)
-  list(APPEND versions "5.4.4")
+  list(APPEND lua_versions "5.4.8")
+  list(APPEND lua_branches "extensions/5.4")
+endif()
+if (LUAWRAPPER_TEST_5_5)
+  list(APPEND lua_versions "5.5.0")
+  list(APPEND lua_branches "extensions/5.5")
 endif()
 
-foreach(version ${versions})
-  include(FetchContent)
+include(FetchContent)
+
+list(LENGTH lua_versions version_count)
+math(EXPR version_last "${version_count} - 1")
+
+foreach(i RANGE ${version_last})
+  list(GET lua_versions ${i} version)
+  list(GET lua_branches ${i} branch)
+
   set(lua_name "lua-${version}")
   set(luawrapper_test_name "luawrapper_test-${version}")
 
   # Fetch and build the specified version of Lua.
   FetchContent_Declare(
     "${lua_name}"
-    GIT_REPOSITORY    "git@github.com:lua/lua.git"
-    GIT_TAG           "v${version}"
+    GIT_REPOSITORY    "git@github.com:alexames/lua.git"
+    GIT_TAG           "${branch}"
   )
   FetchContent_MakeAvailable("${lua_name}")
   set(LUA_VERSION ${version})

@@ -120,8 +120,7 @@ U luaU_opt(lua_State* L, int index, const U& fallback = U()) {
 
 template <typename U>
 inline U luaU_getfield(lua_State* L, int index, const char* field) {
-  static_assert(!std::is_same<U, const char*>::value,
-                "luaU_getfield is not safe to use on const char*'s. (The string will be popped from the stack.)");
+  static_assert(!std::is_same<U, const char*>::value, "luaU_getfield is not safe to use on const char*'s. (The string will be popped from the stack.)");
   lua_getfield(L, index, field);
   U val = luaU_to<U>(L, -1);
   lua_pop(L, 1);
@@ -130,8 +129,7 @@ inline U luaU_getfield(lua_State* L, int index, const char* field) {
 
 template <typename U>
 inline U luaU_checkfield(lua_State* L, int index, const char* field) {
-  static_assert(!std::is_same<U, const char*>::value,
-                "luaU_checkfield is not safe to use on const char*'s. (The string will be popped from the stack.)");
+  static_assert(!std::is_same<U, const char*>::value, "luaU_checkfield is not safe to use on const char*'s. (The string will be popped from the stack.)");
   lua_getfield(L, index, field);
   U val = luaU_check<U>(L, -1);
   lua_pop(L, 1);
@@ -140,8 +138,7 @@ inline U luaU_checkfield(lua_State* L, int index, const char* field) {
 
 template <typename U>
 inline U luaU_optfield(lua_State* L, int index, const char* field, const U& fallback = U()) {
-  static_assert(!std::is_same<U, const char*>::value,
-                "luaU_getfield is not safe to use on const char*'s. (The string will be popped from the stack.)");
+  static_assert(!std::is_same<U, const char*>::value, "luaU_getfield is not safe to use on const char*'s. (The string will be popped from the stack.)");
   lua_getfield(L, index, field);
   U val = luaU_opt<U>(L, -1, fallback);
   lua_pop(L, 1);
@@ -203,14 +200,14 @@ inline void luaU_setfield(lua_State* L, int index, const char* field, U val) {
 // In a Lua script, you can now use foo:GetBar(), foo:SetBar() and foo:Bar()
 //
 
-template <typename T, typename U, U T::*Member>
+template <typename T, typename U, U T::* Member>
 int luaU_get(lua_State* L) {
   T* obj = luaW_check<T>(L, 1);
   luaU_push(L, obj->*Member);
   return 1;
 }
 
-template <typename T, typename U, U* T::*Member>
+template <typename T, typename U, U* T::* Member>
 int luaU_get(lua_State* L) {
   T* obj = luaW_check<T>(L, 1);
   luaW_push<U>(L, obj->*Member);
@@ -238,7 +235,7 @@ int luaU_get(lua_State* L) {
   return 1;
 }
 
-template <typename T, typename U, U T::*Member>
+template <typename T, typename U, U T::* Member>
 int luaU_set(lua_State* L) {
   T* obj = luaW_check<T>(L, 1);
   if (obj) {
@@ -247,7 +244,7 @@ int luaU_set(lua_State* L) {
   return 0;
 }
 
-template <typename T, typename U, U* T::*Member>
+template <typename T, typename U, U* T::* Member>
 int luaU_set(lua_State* L) {
   T* obj = luaW_check<T>(L, 1);
   if (obj) {
@@ -257,7 +254,7 @@ int luaU_set(lua_State* L) {
   return 0;
 }
 
-template <typename T, typename U, const U* T::*Member>
+template <typename T, typename U, const U* T::* Member>
 int luaU_set(lua_State* L) {
   T* obj = luaW_check<T>(L, 1);
   if (obj) {
@@ -267,7 +264,7 @@ int luaU_set(lua_State* L) {
   return 0;
 }
 
-template <typename T, typename U, const U* T::*Member>
+template <typename T, typename U, const U* T::* Member>
 int luaU_setandrelease(lua_State* L) {
   T* obj = luaW_check<T>(L, 1);
   if (obj) {
@@ -321,7 +318,7 @@ int luaU_setandrelease(lua_State* L) {
   return 0;
 }
 
-template <typename T, typename U, U T::*Member>
+template <typename T, typename U, U T::* Member>
 int luaU_getset(lua_State* L) {
   T* obj = luaW_check<T>(L, 1);
   if (obj && lua_gettop(L) >= 2) {
@@ -333,7 +330,7 @@ int luaU_getset(lua_State* L) {
   }
 }
 
-template <typename T, typename U, U* T::*Member>
+template <typename T, typename U, U* T::* Member>
 int luaU_getset(lua_State* L) {
   T* obj = luaW_check<T>(L, 1);
   if (obj && lua_gettop(L) >= 2) {
@@ -346,7 +343,7 @@ int luaU_getset(lua_State* L) {
   }
 }
 
-template <typename T, typename U, U* T::*Member>
+template <typename T, typename U, U* T::* Member>
 int luaU_getsetandrelease(lua_State* L) {
   T* obj = luaW_check<T>(L, 1);
   if (obj && lua_gettop(L) >= 2) {

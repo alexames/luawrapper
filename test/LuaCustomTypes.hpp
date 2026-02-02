@@ -3,11 +3,10 @@
 
 #include <string>
 
+#include "Vector2D.hpp"
 #include "lua.h"
 #include "luawrapper.hpp"
 #include "luawrapperutil.hpp"
-
-#include "Vector2D.hpp"
 
 // LuaWrapper knows about primitive types like ints and floats, but it doesn't
 // know about things like std::strings or other more complicated types.
@@ -37,9 +36,7 @@ std::string luaU_to(lua_State* L, int index) {
   return std::string(lua_tostring(L, index));
 }
 
-static void luaU_push(lua_State* L, const std::string& val) {
-  lua_pushstring(L, val.c_str());
-}
+static void luaU_push(lua_State* L, const std::string& val) { lua_pushstring(L, val.c_str()); }
 
 // These two functions let me convert a simple Vector2D structure into a Lua
 // table holding the x and y values
@@ -51,14 +48,12 @@ bool luaU_is<Vector2D>(lua_State* L, int index) {
 
 template <>
 Vector2D luaU_check(lua_State* L, int index) {
-  return Vector2D(luaU_getfield<float>(L, index, "x"),
-                  luaU_getfield<float>(L, index, "y"));
+  return Vector2D(luaU_getfield<float>(L, index, "x"), luaU_getfield<float>(L, index, "y"));
 }
 
 template <>
 Vector2D luaU_to(lua_State* L, int index) {
-  return Vector2D(luaU_getfield<float>(L, index, "x"),
-                  luaU_getfield<float>(L, index, "y"));
+  return Vector2D(luaU_getfield<float>(L, index, "x"), luaU_getfield<float>(L, index, "y"));
 }
 
 static void luaU_push(lua_State* L, const Vector2D& val) {

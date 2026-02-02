@@ -23,7 +23,7 @@ jobs:
       with: { python-version: "3.8" }
 
     - name: Install codespell
-      run: pip3 install codespell
+      run: pip3 install codespell clang-format==19.1.5
 
     - name: Lint
       run: cmake -D FORMAT_COMMAND=clang-format -P cmake/lint.cmake

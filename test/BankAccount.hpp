@@ -2,20 +2,20 @@
 #define EXAMPLE_HPP_
 
 class BankAccount {
-public:
+ public:
   BankAccount(const char* owner, float balance);
 
   const char* getOwnerName() const;
   void deposit(float amount);
   void withdraw(float amount);
   float checkBalance() const;
-  
+
   static float checkTotalMoneyInBank();
-    
-private:
+
+ private:
   const char* m_owner;
   float m_balance;
   static float s_totalMoneyInBank;
 };
 
-#endif // EXAMPLE_HPP_
+#endif  // EXAMPLE_HPP_

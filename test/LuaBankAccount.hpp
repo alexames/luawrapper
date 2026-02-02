@@ -5,4 +5,4 @@ struct lua_State;
 
 int luaopen_BankAccount(lua_State*);
 
-#endif // LUAEXAMPLE_HPP_
+#endif  // LUAEXAMPLE_HPP_

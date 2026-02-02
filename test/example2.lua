@@ -9,7 +9,7 @@ ex:SetBoolean(true)
 ex:Integer(100)
 print("Integer = ", ex:Integer());
 
-ex:SetCPPString("This will be automatically conveted into a std::string")
+ex:SetCPPString("This will be automatically converted into a std::string")
 
 -- Because I've defined helper functions for Vector2D, I can pass this table
 -- to a function expecting a Vector2d as an argument. I don't need to register

@@ -5,7 +5,7 @@
 
 // API Summary:
 //
-// LuaWrapper is a library designed to help bridge the gab between Lua and
+// LuaWrapper is a library designed to help bridge the gap between Lua and
 // C++. It is designed to be small (a single header file), simple, fast,
 // and typesafe. It has no external dependencies, and does not need to be
 // precompiled; the header can simply be dropped into a project and used
@@ -26,7 +26,7 @@
 // These functions allow you to manipulate arbitrary classes just like you
 // would the primitive types (e.g. numbers or strings). If you are familiar
 // with the normal Lua API the behavior of these functions should be very
-// intuative.
+// intuitive.
 //
 // For more information see the README and the comments below
 
@@ -74,7 +74,7 @@ void luaW_defaultdeallocator(lua_State*, T* obj) {
 
 // The identifier function is responsible for pushing a value unique to each
 // object on to the stack. Most of the time, this can simply be the address
-// of the pointer, but sometimes that is not adaquate. For example, if you
+// of the pointer, but sometimes that is not adequate. For example, if you
 // are using shared_ptr you would need to push the address of the object the
 // shared_ptr represents, rather than the address of the shared_ptr itself.
 template <typename T>
@@ -143,7 +143,7 @@ inline void luaW_wrapperfield(lua_State* L, const char* field) {
 // Analogous to lua_is(boolean|string|*)
 //
 // Returns 1 if the value at the given acceptable index is of type T (or if
-// strict is false, convertable to type T) and 0 otherwise.
+// strict is false, convertible to type T) and 0 otherwise.
 template <typename T>
 bool luaW_is(lua_State* L, int index, bool strict = false) {
   bool equal = false;  // lua_isnil(L, index);
@@ -171,7 +171,7 @@ bool luaW_is(lua_State* L, int index, bool strict = false) {
 // Analogous to lua_to(boolean|string|*)
 //
 // Converts the given acceptable index to a T*. That value must be of (or
-// convertable to) type T; otherwise, returns NULL.
+// convertible to) type T; otherwise, returns NULL.
 template <typename T>
 T* luaW_to(lua_State* L, int index, bool strict = false) {
   if (luaW_is<T>(L, index, strict)) {
@@ -189,7 +189,7 @@ T* luaW_to(lua_State* L, int index, bool strict = false) {
 // Analogous to luaL_check(boolean|string|*)
 //
 // Converts the given acceptable index to a T*. That value must be of (or
-// convertable to) type T; otherwise, an error is raised.
+// convertible to) type T; otherwise, an error is raised.
 template <typename T>
 T* luaW_check(lua_State* L, int index, bool strict = false) {
   T* obj = NULL;
@@ -327,7 +327,7 @@ void luaW_postconstructorinternal(lua_State* L, int numargs) {
 // userdata. Assumes the userdata is on the stack and numargs arguments follow
 // it. This runs the LUAW_POSTCTOR_KEY function on T's metatable, using the
 // object as the first argument and whatever else is below it as the rest of the
-// arguments This exists to allow types to adjust values in thier storage table,
+// arguments. This exists to allow types to adjust values in their storage table,
 // which can not be created until after the constructor is called.
 template <typename T>
 void luaW_postconstructor(lua_State* L, int numargs) {
@@ -361,7 +361,7 @@ int luaW_new(lua_State* L) {
 // The default metamethod to call when indexing into lua userdata representing
 // an object of type T. This will first check the userdata's environment table
 // and if it's not found there it will check the metatable. This is done so
-// individual userdata can be treated as a table, and can hold thier own
+// individual userdata can be treated as a table, and can hold their own
 // values.
 template <typename T>
 int luaW_index(lua_State* L) {
@@ -393,7 +393,7 @@ int luaW_index(lua_State* L) {
 // The default metamethod to call when creating a new index on lua userdata
 // representing an object of type T. This will index into the the userdata's
 // environment table that it keeps for personal storage. This is done so
-// individual userdata can be treated as a table, and can hold thier own
+// individual userdata can be treated as a table, and can hold their own
 // values.
 template <typename T>
 int luaW_newindex(lua_State* L) {
@@ -446,7 +446,7 @@ int luaW_gc(lua_State* L) {
   return 0;
 }
 
-// Thakes two tables and registers them with Lua to the table on the top of the
+// Takes two tables and registers them with Lua to the table on the top of the
 // stack.
 //
 // This function is only called from LuaWrapper internally.
@@ -518,7 +518,7 @@ inline void luaW_initialize(lua_State* L) {
 //
 // luaW_register will set table as the new value of the global of the given
 // name. luaW_setfuncs is identical to luaW_register, but it does not set the
-// table globally.  As with luaL_register and luaL_setfuncs, both funcstions
+// table globally.  As with luaL_register and luaL_setfuncs, both functions
 // leave the new table on the top of the stack.
 template <typename T>
 void luaW_setfuncs(lua_State* L, const char* classname, const luaL_Reg* table, const luaL_Reg* metatable, T* (*allocator)(lua_State*) = luaW_defaultallocator<T>, void (*deallocator)(lua_State*, T*) = luaW_defaultdeallocator<T>, void (*identifier)(lua_State*, T*) = luaW_defaultidentifier<T>) {
@@ -575,7 +575,7 @@ void luaW_register(lua_State* L, const char* classname, const luaL_Reg* table, c
 // luaW_extend is used to declare that class T inherits from class U. All
 // functions in the base class will be available to the derived class (except
 // when they share a function name, in which case the derived class's function
-// wins). This also allows luaW_to<T> to cast your object apropriately, as
+// wins). This also allows luaW_to<T> to cast your object appropriately, as
 // casts straight through a void pointer do not work.
 template <typename T, typename U>
 void luaW_extend(lua_State* L) {

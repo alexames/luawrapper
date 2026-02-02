@@ -1,4 +1,4 @@
-LuaWrapper is a library designed to help bridge the gab between Lua and C++.
+LuaWrapper is a library designed to help bridge the gap between Lua and C++.
 It is designed to be small (a single header file), simple, fast, and typesafe.
 It has no external dependencies other than the lua library itself, and does not
 need to be precompiled; the header can simply be dropped into a project and
@@ -74,7 +74,7 @@ by Lua, you may call `luaW_release` on it.
 
 A second file, called `LuaWrapperUtil.hpp` includes a number of additional
 functions that may be useful, which build upon the core LuaWrapper API. The
-main features are some functions which automatically cast interger types to
+main features are some functions which automatically cast integer types to
 enum types and templated getters and setters for primitives an pointers to
 objects. All functions in `LuaWrapperUtil.hpp` are prefixed with `luaU_`.
 Documentation and some examples are provided in the comments of the file.

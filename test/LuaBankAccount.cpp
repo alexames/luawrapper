@@ -15,7 +15,7 @@ using namespace std;
 //
 // Allocator
 //
-// Types that do not have a default contructor require you to write an allocator function.
+// Types that do not have a default constructor require you to write an allocator function.
 // This function is passed to luaW_register.
 //
 

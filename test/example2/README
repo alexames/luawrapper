@@ -8,7 +8,7 @@ instead of luaW_
 
 In example 1, all of the wrapper functions were written manually. It is very
 common need to write get or set function wrappers - so common in fact that this
-patter was extracted out into a templated function. In example 1, BankAccount
+pattern was extracted out into a templated function. In example 1, BankAccount
 had the following wrapper:
 
 int BankAccount_checkBalance(lua_State *L)

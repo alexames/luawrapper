@@ -5,9 +5,9 @@
 
 // API Summary:
 //
-// This is a set of utility functions that add to the functionalit of
+// This is a set of utility functions that add to the functionality of
 // LuaWrapper. Over time I found myself repeating a few patterns, such as
-// writing many trvial getter and setter functions, and wanting pass ownership
+// writing many trivial getter and setter functions, and wanting pass ownership
 // of one object to another and have the Lua script properly handle that case.
 //
 // This file contains the additional functions that I've added but that do
@@ -172,7 +172,7 @@ inline void luaU_setfield(lua_State* L, int index, const char* field, U val) {
 // getter and setter functions, there is a getset which does both - if an
 // argument is supplied it attempts to set the value, and in either case it
 // returns the value. In your lua table declaration in C++ rather than write
-// individiual wrappers for each getter and setter you may do the following:
+// individual wrappers for each getter and setter you may do the following:
 //
 // static luaL_reg Foo_metatable[] =
 // {
@@ -678,7 +678,7 @@ int luaU_build(lua_State* L) {
 // You may manually call luaW_hold and luaW_release to handle pointer
 // ownership, but it is often easier to simply store a Lua userdata on a table
 // that is owned by its parent. This ensures that your object will not be
-// prematurely freed, and that it can only be destoryed after its parent.
+// prematurely freed, and that it can only be destroyed after its parent.
 //
 // e.g.
 //

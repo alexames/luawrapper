@@ -26,7 +26,7 @@ jobs:
       run: pip3 install codespell
 
     - name: Lint
-      run: cmake -D FORMAT_COMMAND=clang-format-12 -P cmake/lint.cmake
+      run: cmake -D FORMAT_COMMAND=clang-format -P cmake/lint.cmake
 
     - name: Spell check
       if: always()
@@ -86,7 +86,7 @@ jobs:
       with: { committish: "${{ env.VCPKG_COMMIT }}" }
 
     - name: Configure
-      env: { CXX: clang++-12 }
+      env: { CXX: clang++-14 }
       run: cmake --preset=ci-sanitize
 
     - name: Build
@@ -118,11 +118,11 @@ jobs:
     - name: Install static analyzers
       if: matrix.os == 'ubuntu-latest'
       run: >-
-        sudo apt-get install clang-tidy-12 cppcheck -y -q
+        sudo apt-get install clang-tidy-14 cppcheck -y -q
 
         sudo update-alternatives --install
         /usr/bin/clang-tidy clang-tidy
-        /usr/bin/clang-tidy-12 120
+        /usr/bin/clang-tidy-14 140
 
     - name: Install vcpkg
       uses: friendlyanon/setup-vcpkg@v1

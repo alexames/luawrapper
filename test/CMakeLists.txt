@@ -1,5 +1,10 @@
 option(LUAWRAPPER_BUILD_TESTS "Build tests" ON)
 option(LUAWRAPPER_TEST_5_1 "Build tests for lua 5.1" ON)
+
+# The top-level project is declared with LANGUAGES NONE since luawrapper
+# itself is header-only; enable C and C++ here for the Lua builds and tests.
+enable_language(C)
+enable_language(CXX)
 option(LUAWRAPPER_TEST_5_2 "Build tests for lua 5.2" ON)
 option(LUAWRAPPER_TEST_5_3 "Build tests for lua 5.3" ON)
 option(LUAWRAPPER_TEST_5_4 "Build tests for lua 5.4" ON)
@@ -10,23 +15,23 @@ set(lua_branches "")
 
 if (LUAWRAPPER_TEST_5_1)
   list(APPEND lua_versions "5.1.1")
-  list(APPEND lua_branches "extensions/5.1")
+  list(APPEND lua_branches "extensions/5.1/master")
 endif()
 if (LUAWRAPPER_TEST_5_2)
   list(APPEND lua_versions "5.2.4")
-  list(APPEND lua_branches "extensions/5.2")
+  list(APPEND lua_branches "extensions/5.2/master")
 endif()
 if (LUAWRAPPER_TEST_5_3)
   list(APPEND lua_versions "5.3.6")
-  list(APPEND lua_branches "extensions/5.3")
+  list(APPEND lua_branches "extensions/5.3/master")
 endif()
 if (LUAWRAPPER_TEST_5_4)
   list(APPEND lua_versions "5.4.8")
-  list(APPEND lua_branches "extensions/5.4")
+  list(APPEND lua_branches "extensions/5.4/master")
 endif()
 if (LUAWRAPPER_TEST_5_5)
   list(APPEND lua_versions "5.5.0")
-  list(APPEND lua_branches "extensions/5.5")
+  list(APPEND lua_branches "extensions/5.5/master")
 endif()
 
 include(FetchContent)
@@ -41,13 +46,19 @@ foreach(i RANGE ${version_last})
   set(lua_name "lua-${version}")
   set(luawrapper_test_name "luawrapper_test-${version}")
 
-  # Fetch and build the specified version of Lua.
+  # Fetch the specified version of Lua's source. We only want the sources;
+  # the fetched repo's own CMakeLists.txt caches a project name that collides
+  # across versions, so use FetchContent_Populate to skip its add_subdirectory
+  # and then build with our universal Lua CMakeLists at ../cmake/lua.
   FetchContent_Declare(
     "${lua_name}"
-    GIT_REPOSITORY    "git@github.com:alexames/lua.git"
+    GIT_REPOSITORY    "https://github.com/alexames/lua.git"
     GIT_TAG           "${branch}"
   )
-  FetchContent_MakeAvailable("${lua_name}")
+  FetchContent_GetProperties("${lua_name}")
+  if(NOT ${lua_name}_POPULATED)
+    FetchContent_Populate("${lua_name}")
+  endif()
   set(LUA_VERSION ${version})
   set(LUA_SOURCE_DIR "${${lua_name}_SOURCE_DIR}")
   add_subdirectory("../cmake/lua" "../cmake/${lua_name}")
@@ -88,4 +99,10 @@ foreach(i RANGE ${version_last})
       VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_CURRENT_LIST_DIR}")
 
   target_link_libraries("${luawrapper_test_name}" PRIVATE "${lua_name}")
+
+  add_test(
+    NAME "${luawrapper_test_name}"
+    COMMAND "${luawrapper_test_name}"
+    WORKING_DIRECTORY "${CMAKE_CURRENT_LIST_DIR}"
+  )
 endforeach()

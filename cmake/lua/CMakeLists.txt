@@ -209,9 +209,11 @@ target_include_directories(${library_name}
     PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}
 )
-target_compile_definitions(${library_name} 
-    PUBLIC 
+target_compile_definitions(${library_name}
+    PUBLIC
         ${LUA_CONF_DEFINES}
+)
+target_compile_options(${library_name}
     PRIVATE
         ${LUA_CWARNS}
 )
@@ -229,3 +231,7 @@ set_target_properties(${interpreter_name}
         FOLDER Lua
 )
 target_link_libraries(${interpreter_name} PRIVATE ${library_name})
+if(UNIX)
+  target_link_libraries(${interpreter_name} PRIVATE m)
+  target_link_libraries(${library_name} PUBLIC m ${CMAKE_DL_LIBS})
+endif()

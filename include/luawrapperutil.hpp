@@ -16,6 +16,7 @@
 #ifndef LUAWRAPPERUTILS_HPP_
 #define LUAWRAPPERUTILS_HPP_
 
+#include <cstdint>
 #include <type_traits>
 
 #include "luawrapper.hpp"
@@ -85,14 +86,9 @@ template <> inline double      luaU_check(lua_State* L, int index) {  return sta
 template <> inline const char* luaU_check(lua_State* L, int index) {  return luaL_checkstring(L, index);                         }
 
 inline void luaU_push(lua_State* L, bool        value) { lua_pushboolean(L, value); }
-inline void luaU_push(lua_State* L, uint8_t     value) { lua_pushinteger(L, value); }
-inline void luaU_push(lua_State* L, int8_t      value) { lua_pushinteger(L, value); }
-inline void luaU_push(lua_State* L, uint16_t    value) { lua_pushinteger(L, value); }
-inline void luaU_push(lua_State* L, int16_t     value) { lua_pushinteger(L, value); }
-inline void luaU_push(lua_State* L, uint32_t    value) { lua_pushinteger(L, value); }
-inline void luaU_push(lua_State* L, int32_t     value) { lua_pushinteger(L, value); }
-inline void luaU_push(lua_State* L, uint64_t    value) { lua_pushinteger(L, value); }
-inline void luaU_push(lua_State* L, int64_t     value) { lua_pushinteger(L, value); }
+template <class T>
+inline std::enable_if_t<std::is_integral_v<T> && !std::is_same_v<T, bool>>
+            luaU_push(lua_State* L, T           value) { lua_pushinteger(L, static_cast<lua_Integer>(value)); }
 inline void luaU_push(lua_State* L, float       value) { lua_pushnumber(L, value);  }
 inline void luaU_push(lua_State* L, double      value) { lua_pushnumber(L, value);  }
 inline void luaU_push(lua_State* L, const char* value) { lua_pushstring(L, value);  }
@@ -548,7 +544,7 @@ struct luaU_MemberFuncWrapper<ReturnType (T::*)(Args...), MemberFunc> {
  private:
   template <int... indices>
   static int callImpl(lua_State* L, luaU_IntPack<indices...>) {
-    luaU_push<ReturnType>(L, (luaW_check<T>(L, 1)->*MemberFunc)(luaU_check<typename luaU_RemoveConstRef<Args>::type>(L, indices)...));
+    luaU_push(L, (luaW_check<T>(L, 1)->*MemberFunc)(luaU_check<typename luaU_RemoveConstRef<Args>::type>(L, indices)...));
     return 1;
   }
 };
@@ -582,7 +578,7 @@ struct luaU_StaticFuncWrapper<ReturnType (*)(Args...), Func> {
  private:
   template <int... indices>
   static int callImpl(lua_State* L, luaU_IntPack<indices...>) {
-    luaU_push<ReturnType>(L, (*Func)(luaU_check<typename luaU_RemoveConstRef<Args>::type>(L, indices)...));
+    luaU_push(L, (*Func)(luaU_check<typename luaU_RemoveConstRef<Args>::type>(L, indices)...));
     return 1;
   }
 };

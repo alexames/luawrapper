@@ -24,9 +24,18 @@ static int testPushLuaInteger(lua_State* L) {
   luaU_push(L, kLuaInt);
 
   int failures = 0;
-  if (lua_tointeger(L, -3) != static_cast<lua_Integer>(kSigned))   { std::cout << "FAIL: long long round-trip\n"; ++failures; }
-  if (lua_tointeger(L, -2) != static_cast<lua_Integer>(kUnsigned)) { std::cout << "FAIL: unsigned long long round-trip\n"; ++failures; }
-  if (lua_tointeger(L, -1) != kLuaInt)                             { std::cout << "FAIL: lua_Integer round-trip\n"; ++failures; }
+  if (lua_tointeger(L, -3) != static_cast<lua_Integer>(kSigned)) {
+    std::cout << "FAIL: long long round-trip\n";
+    ++failures;
+  }
+  if (lua_tointeger(L, -2) != static_cast<lua_Integer>(kUnsigned)) {
+    std::cout << "FAIL: unsigned long long round-trip\n";
+    ++failures;
+  }
+  if (lua_tointeger(L, -1) != kLuaInt) {
+    std::cout << "FAIL: lua_Integer round-trip\n";
+    ++failures;
+  }
   lua_pop(L, 3);
   if (failures == 0) std::cout << "PASS: luaU_push lua_Integer/long long\n";
   return failures;

@@ -4,7 +4,7 @@ include(cmake/prelude.cmake)
 
 project(
     luawrapper
-    VERSION 0.0.1
+    VERSION 0.0.5
     DESCRIPTION "A library to make writing C++ to Lua bindings easier."
     HOMEPAGE_URL "https://github.com/alexames/luawrapper"
     LANGUAGES NONE

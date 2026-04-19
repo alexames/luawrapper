@@ -86,7 +86,7 @@ jobs:
       with: { committish: "${{ env.VCPKG_COMMIT }}" }
 
     - name: Configure
-      env: { CXX: clang++-14 }
+      env: { CXX: clang++-18 }
       run: cmake --preset=ci-sanitize
 
     - name: Build

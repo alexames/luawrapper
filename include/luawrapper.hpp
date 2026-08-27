@@ -545,11 +545,11 @@ void luaW_setfuncs(lua_State* L, const char* classname, const luaL_Reg* table, c
   lua_setfield(L, -2, LuaWrapper<T>::classname);  // ... LuaWrapper LuaWrapper.holds
   lua_pop(L, 1);                                  // ... LuaWrapper
 
-  lua_getfield(L, -1, LUAW_CACHE_KEY);                // ... LuaWrapper LuaWrapper.cache
-  lua_newtable(L);                                    // ... LuaWrapper LuaWrapper.cache {}
-  luaW_wrapperfield<T>(L, LUAW_CACHE_METATABLE_KEY);  // ... LuaWrapper LuaWrapper.cache {} cmt
-  lua_setmetatable(L, -2);                            // ... LuaWrapper LuaWrapper.cache {}
-  lua_setfield(L, -2, LuaWrapper<T>::classname);      // ... LuaWrapper LuaWrapper.cache
+  lua_getfield(L, -1, LUAW_CACHE_KEY);            // ... LuaWrapper LuaWrapper.cache
+  lua_newtable(L);                                // ... LuaWrapper LuaWrapper.cache {}
+  lua_getfield(L, -3, LUAW_CACHE_METATABLE_KEY);  // ... LuaWrapper LuaWrapper.cache {} cmt
+  lua_setmetatable(L, -2);                        // ... LuaWrapper LuaWrapper.cache {}
+  lua_setfield(L, -2, LuaWrapper<T>::classname);  // ... LuaWrapper LuaWrapper.cache
 
   lua_pop(L, 2);  // ...
 

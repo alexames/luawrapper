@@ -6,6 +6,7 @@ extern "C" {
 }
 
 #include "LuaBankAccount.hpp"
+#include "luawrapper.hpp"
 #include "luawrapperutil.hpp"
 
 const char kTestFile[] = "example1.lua";
@@ -41,11 +42,60 @@ static int testPushLuaInteger(lua_State* L) {
   return failures;
 }
 
+// Counts destructions of the type below, so a collection that did not happen
+// is visible from C++.
+static int s_collectedCount = 0;
+
+class Collectable {
+ public:
+  ~Collectable() { ++s_collectedCount; }
+};
+
+// Regression test: luaW_setfuncs must give each class's cache table the weak
+// metatable stored under LUAW_CACHE_METATABLE_KEY. That key holds one shared
+// table rather than a per-class one, so reaching it through luaW_wrapperfield
+// -- which indexes LuaWrapper[field][classname] -- yields nil, and setting nil
+// as a metatable leaves the cache with strong values. The cache then keeps
+// every wrapped userdata alive: an object Lua owns is never collected and its
+// deallocator never runs.
+static int testHeldObjectIsCollected(lua_State* L) {
+  luaW_setfuncs<Collectable>(L, "Collectable", NULL, NULL);
+  lua_pop(L, 1);
+
+  int failures = 0;
+
+  // Pushed AND held: the push is what creates the userdata and caches it, and
+  // the hold is what makes its collection free the object.
+  Collectable* obj = new Collectable();
+  luaW_push<Collectable>(L, obj);
+  luaW_hold<Collectable>(L, obj);
+
+  // Weak values must not cost the cache its job. A second push of the same
+  // live pointer has to find the first userdata rather than make a second one
+  // for the same object.
+  luaW_push<Collectable>(L, obj);
+  if (!lua_rawequal(L, -1, -2)) {
+    std::cout << "FAIL: pushing one object twice made two userdata\n";
+    ++failures;
+  }
+  lua_pop(L, 2);  // The cache is now the only thing referring to it.
+
+  lua_gc(L, LUA_GCCOLLECT, 0);
+  if (s_collectedCount != 1) {
+    std::cout << "FAIL: an object Lua holds was not collected\n";
+    ++failures;
+  }
+
+  if (failures == 0) std::cout << "PASS: an object Lua holds is cached and collected\n";
+  return failures;
+}
+
 int main(int argc, const char* argv[]) {
   lua_State* L = luaL_newstate();
   luaL_openlibs(L);
   luaopen_BankAccount(L);
   int failures = testPushLuaInteger(L);
+  failures += testHeldObjectIsCollected(L);
   if (luaL_dofile(L, kTestFile)) std::cout << lua_tostring(L, -1) << std::endl;
   lua_close(L);
   return failures == 0 ? 0 : 1;

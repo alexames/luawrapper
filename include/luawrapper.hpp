@@ -153,12 +153,14 @@ bool luaW_is(lua_State* L, int index, bool strict = false) {
     equal = lua_rawequal(L, -1, -2) != 0;
     if (!equal && !strict) {
       lua_getfield(L, -2, LUAW_EXTENDS_KEY);  // ... ud ... udmt Tmt udmt.extends
-      for (lua_pushnil(L); lua_next(L, -2); lua_pop(L, 1)) {
-        // ... ud ... udmt Tmt udmt.extends k v
-        equal = lua_rawequal(L, -1, -4) != 0;
-        if (equal) {
-          lua_pop(L, 2);  // ... ud ... udmt Tmt udmt.extends
-          break;
+      if (lua_istable(L, -1)) {
+        for (lua_pushnil(L); lua_next(L, -2); lua_pop(L, 1)) {
+          // ... ud ... udmt Tmt udmt.extends k v
+          equal = lua_rawequal(L, -1, -4) != 0;
+          if (equal) {
+            lua_pop(L, 2);  // ... ud ... udmt Tmt udmt.extends
+            break;
+          }
         }
       }
       lua_pop(L, 1);  // ... ud ... udmt Tmt

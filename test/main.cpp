@@ -90,12 +90,59 @@ static int testHeldObjectIsCollected(lua_State* L) {
   return failures;
 }
 
+class Wrapped {};
+
+// Pushes a full userdata that LuaWrapper did not make: its metatable is a plain
+// table whose extends field, if set, is `extends` rather than a table.
+static void pushForeignUserdata(lua_State* L, bool setExtends) {
+  lua_newuserdata(L, 1);  // ... ud
+  lua_newtable(L);        // ... ud mt
+  if (setExtends) {
+    lua_pushinteger(L, 1);
+    lua_setfield(L, -2, LUAW_EXTENDS_KEY);
+  }
+  lua_setmetatable(L, -2);  // ... ud
+}
+
+// Regression test: luaW_is must answer false for a full userdata whose
+// metatable is not one of LuaWrapper's, such as an io file or another
+// binding's type. Such a metatable has no extends table, and walking the
+// missing table with lua_next is undefined behaviour -- in practice a crash.
+static int testForeignUserdataIsNotAType(lua_State* L) {
+  luaW_setfuncs<Wrapped>(L, "Wrapped", NULL, NULL);
+  lua_pop(L, 1);
+
+  int failures = 0;
+  for (bool setExtends : {false, true}) {
+    const char* which = setExtends ? "a non-table extends" : "no extends";
+    pushForeignUserdata(L, setExtends);
+    const int top = lua_gettop(L);
+    if (luaW_is<Wrapped>(L, -1)) {
+      std::cout << "FAIL: luaW_is accepted a foreign userdata with " << which << "\n";
+      ++failures;
+    }
+    if (luaW_to<Wrapped>(L, -1) != NULL) {
+      std::cout << "FAIL: luaW_to converted a foreign userdata with " << which << "\n";
+      ++failures;
+    }
+    if (lua_gettop(L) != top) {
+      std::cout << "FAIL: luaW_is left the stack unbalanced for " << which << "\n";
+      ++failures;
+    }
+    lua_pop(L, 1);
+  }
+
+  if (failures == 0) std::cout << "PASS: a foreign userdata is not a LuaWrapper type\n";
+  return failures;
+}
+
 int main(int argc, const char* argv[]) {
   lua_State* L = luaL_newstate();
   luaL_openlibs(L);
   luaopen_BankAccount(L);
   int failures = testPushLuaInteger(L);
   failures += testHeldObjectIsCollected(L);
+  failures += testForeignUserdataIsNotAType(L);
   if (luaL_dofile(L, kTestFile)) std::cout << lua_tostring(L, -1) << std::endl;
   lua_close(L);
   return failures == 0 ? 0 : 1;
